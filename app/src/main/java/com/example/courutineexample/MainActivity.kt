@@ -2,6 +2,7 @@ package com.example.courutineexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -15,6 +16,10 @@ class MainActivity : AppCompatActivity() {
     private var btnAddMessage: FloatingActionButton? = null
     private var btnSetCheck: FloatingActionButton? = null
     private var btnSendEmail: FloatingActionButton? = null
+    private var btnPost: FloatingActionButton? = null
+
+    private val scoupe = MainScope()
+
     private var jobSend:Job? = null
 
     private var txtStatus:TextView? = null
@@ -32,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         btnAddMessage = findViewById(R.id.btnAddMessage)
         btnSetCheck = findViewById(R.id.btnSetCheck)
         btnSendEmail = findViewById(R.id.btnSendEmail)
+        btnPost = findViewById(R.id.btnPost)
 
         txtStatus = findViewById(R.id.txtStatus)
 
@@ -45,6 +51,10 @@ class MainActivity : AppCompatActivity() {
 
         btnSendEmail?.setOnClickListener {
             onSendEmailClick(it)
+        }
+
+        btnPost?.setOnClickListener {
+            onGetPostClick(it)
         }
 
     }
@@ -96,6 +106,41 @@ class MainActivity : AppCompatActivity() {
 
     private fun SendEmail(address: String):String {
         return "OK"
+    }
+
+    fun onGetPostClick(view: View) {
+
+        readData()
+        //запуск при блокировке основного потока
+        /*
+        runBlocking {
+            launch {
+                getPost()
+            }
+        }
+        */
+    }
+
+    suspend fun getPost() {
+        delay(5000)
+        Log.w("MyLOG", "get Post request.")
+    }
+
+
+    //Паралеьное выполнение без блокировки
+    fun readData() = scoupe.launch {
+        showIOData()
+    }
+
+    suspend fun showIOData() {
+        val data = withContext(Dispatchers.IO) {
+            //расчет данных в фонофом процессе
+            for (i in 1..10) {
+                Log.w("MyLOG","Read $i")
+                delay(1000)
+            }
+        }
+
     }
 
 }

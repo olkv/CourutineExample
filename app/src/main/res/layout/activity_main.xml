@@ -66,4 +66,15 @@
         app:rippleColor="@color/white"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/btnSendEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_popup_sync" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
