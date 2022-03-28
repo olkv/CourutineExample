@@ -14,6 +14,8 @@ class MainActivity : AppCompatActivity() {
 
     private var btnAddMessage: FloatingActionButton? = null
     private var btnSetCheck: FloatingActionButton? = null
+    private var btnSendEmail: FloatingActionButton? = null
+    private var jobSend:Job? = null
 
     private var txtStatus:TextView? = null
 
@@ -29,8 +31,9 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         btnAddMessage = findViewById(R.id.btnAddMessage)
         btnSetCheck = findViewById(R.id.btnSetCheck)
-        txtStatus = findViewById(R.id.txtStatus)
+        btnSendEmail = findViewById(R.id.btnSendEmail)
 
+        txtStatus = findViewById(R.id.txtStatus)
 
         btnAddMessage?.setOnClickListener {
             onStartClick(it)
@@ -38,6 +41,10 @@ class MainActivity : AppCompatActivity() {
 
         btnSetCheck?.setOnClickListener {
             onSetCheckClick(it)
+        }
+
+        btnSendEmail?.setOnClickListener {
+            onSendEmailClick(it)
         }
 
     }
@@ -71,5 +78,24 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    private fun onSendEmailClick(view: View) {
+        var res:String=""
+
+        txtStatus?.text = "Send EMail to olkv@wellit.pro"
+
+        jobSend = CoroutineScope(Dispatchers.Main).launch {
+            res = SendEmail("olkv@wellit.pro")
+            delay(3000)
+            txtStatus?.text = res
+        }
+
+
+
+    }
+
+    private fun SendEmail(address: String):String {
+        return "OK"
+    }
 
 }
