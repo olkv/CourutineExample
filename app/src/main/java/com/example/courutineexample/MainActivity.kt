@@ -8,10 +8,13 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private var btnAddMessage: FloatingActionButton? = null
+    private var btnSetCheck: FloatingActionButton? = null
+
     private var txtStatus:TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun init() {
         btnAddMessage = findViewById(R.id.btnAddMessage)
+        btnSetCheck = findViewById(R.id.btnSetCheck)
         txtStatus = findViewById(R.id.txtStatus)
 
 
@@ -32,6 +36,9 @@ class MainActivity : AppCompatActivity() {
             onStartClick(it)
         }
 
+        btnSetCheck?.setOnClickListener {
+            onSetCheckClick(it)
+        }
 
     }
 
@@ -49,6 +56,17 @@ class MainActivity : AppCompatActivity() {
 
             txtStatus?.text = "Done!"
 
+        }
+
+    }
+
+    private fun onSetCheckClick(view: View) {
+        CoroutineScope(Dispatchers.Main).launch {
+            for (i in 1..10) {
+                txtStatus?.text = i.toString()
+                delay(500)
+            }
+            txtStatus?.text = "Done!"
         }
 
     }
