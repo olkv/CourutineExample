@@ -9,6 +9,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -110,7 +113,9 @@ class MainActivity : AppCompatActivity() {
 
     fun onGetPostClick(view: View) {
 
+        //Считываем данные в потоке IO
         readData()
+
         //запуск при блокировке основного потока
         /*
         runBlocking {
@@ -129,7 +134,14 @@ class MainActivity : AppCompatActivity() {
 
     //Паралеьное выполнение без блокировки
     fun readData() = scoupe.launch {
+        /*
         showIOData()
+        txtStatus?.text = "Excecuting read fata."
+        Log.w("MyLOG","Executing read data.")
+        */
+
+        MyFlow()
+
     }
 
     suspend fun showIOData() {
@@ -142,5 +154,24 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    suspend fun MyFlow() {
+        getUsers().collect {user ->
+            Log.w("MyLOG", user)
+            txtStatus?.text = user
+        }
+    }
+
+    fun getUsers(): Flow<String> = flow {
+        val database = listOf("Tom", "Bob", "Sam")  // условная база данных
+        var i = 1
+        for (item in database){
+            delay(1000) // имитация продолжительной работы
+            Log.w("MyLOG", "Emit $i item")
+            emit(item) // емитируем значение
+            i++
+        }
+    }
+
 
 }
