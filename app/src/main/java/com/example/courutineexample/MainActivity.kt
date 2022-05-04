@@ -2,12 +2,16 @@ package com.example.courutineexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -15,6 +19,10 @@ class MainActivity : AppCompatActivity() {
     private var btnAddMessage: FloatingActionButton? = null
     private var btnSetCheck: FloatingActionButton? = null
     private var btnSendEmail: FloatingActionButton? = null
+    private var btnPost: FloatingActionButton? = null
+
+    private val scoupe = MainScope()
+
     private var jobSend:Job? = null
 
     private var txtStatus:TextView? = null
@@ -32,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         btnAddMessage = findViewById(R.id.btnAddMessage)
         btnSetCheck = findViewById(R.id.btnSetCheck)
         btnSendEmail = findViewById(R.id.btnSendEmail)
+        btnPost = findViewById(R.id.btnPost)
 
         txtStatus = findViewById(R.id.txtStatus)
 
@@ -45,6 +54,10 @@ class MainActivity : AppCompatActivity() {
 
         btnSendEmail?.setOnClickListener {
             onSendEmailClick(it)
+        }
+
+        btnPost?.setOnClickListener {
+            onGetPostClick(it)
         }
 
     }
@@ -97,5 +110,68 @@ class MainActivity : AppCompatActivity() {
     private fun SendEmail(address: String):String {
         return "OK"
     }
+
+    fun onGetPostClick(view: View) {
+
+        //Считываем данные в потоке IO
+        readData()
+
+        //запуск при блокировке основного потока
+        /*
+        runBlocking {
+            launch {
+                getPost()
+            }
+        }
+        */
+    }
+
+    suspend fun getPost() {
+        delay(5000)
+        Log.w("MyLOG", "get Post request.")
+    }
+
+
+    //Паралеьное выполнение без блокировки
+    fun readData() = scoupe.launch {
+        /*
+        showIOData()
+        txtStatus?.text = "Excecuting read fata."
+        Log.w("MyLOG","Executing read data.")
+        */
+
+        MyFlow()
+
+    }
+
+    suspend fun showIOData() {
+        val data = withContext(Dispatchers.IO) {
+            //расчет данных в фонофом процессе
+            for (i in 1..10) {
+                Log.w("MyLOG","Read $i")
+                delay(1000)
+            }
+        }
+
+    }
+
+    suspend fun MyFlow() {
+        getUsers().collect {user ->
+            Log.w("MyLOG", user)
+            txtStatus?.text = user
+        }
+    }
+
+    fun getUsers(): Flow<String> = flow {
+        val database = listOf("Tom", "Bob", "Sam")  // условная база данных
+        var i = 1
+        for (item in database){
+            delay(1000) // имитация продолжительной работы
+            Log.w("MyLOG", "Emit $i item")
+            emit(item) // емитируем значение
+            i++
+        }
+    }
+
 
 }
